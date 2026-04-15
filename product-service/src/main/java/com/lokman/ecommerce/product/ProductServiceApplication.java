@@ -1,4 +1,4 @@
-package com.lokman.ecommerce;
+package com.lokman.ecommerce.product;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
