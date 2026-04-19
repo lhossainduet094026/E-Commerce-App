@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.lokman.ecommerce.product.external.dto.InventoryRequest;
 import com.lokman.ecommerce.product.external.dto.InventoryResponse;
 
-@FeignClient(name = "inventory-client", url = "${}")
+@FeignClient(name = "inventory-client", url = "${inventory.service.url}")
 public interface InventoryClient {
 
 	@PostMapping("/updateQuantity")

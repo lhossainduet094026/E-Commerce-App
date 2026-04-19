@@ -1,5 +1,7 @@
 package com.lokman.ecommerce.product.dto;
 
-public class ProductResponse {
-
-}
+public record ProductResponse(Long id, 
+		String name, 
+		String description, 
+		String skuCode, 
+		Integer quantity) {}
