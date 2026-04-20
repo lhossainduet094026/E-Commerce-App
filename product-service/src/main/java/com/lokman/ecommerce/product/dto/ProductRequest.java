@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-
+ 
 public record ProductRequest(@NotBlank(message = "SkuCode required") String skuCode, 
 		@NotBlank(message = "Name required") String name, 
 		String description, 

@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: product-service
+
+  datasource:
+    url: jdbc:mysql://db:3306/product
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        transaction:
+          coordinator_class: jdbc
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        use_sql_comments: true
+    show-sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+inventory:
+  service:
+    url: http://localhost:8081/api/inventory
+        
+ resilence4j:
+ 	retry:
+ 	  instances:
+ 	    inventoryService:
+ 	     maxAttempts: 3
+ 	     waitDuration: 1s 
+ 	     
+ circuitbreaker:
+    instances:
+      inventoryService:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        failureRateThreshold: 40
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+          	     
+ 	     
+ 	            
