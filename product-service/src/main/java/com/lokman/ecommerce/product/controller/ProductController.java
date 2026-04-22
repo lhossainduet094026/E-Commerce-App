@@ -11,6 +11,7 @@ import com.lokman.ecommerce.product.dto.ProductRequest;
 import com.lokman.ecommerce.product.dto.ProductResponse;
 import com.lokman.ecommerce.product.service.ProductService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class ProductController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ProductResponse createProduct(@RequestBody ProductRequest productRequest) {
+	public ProductResponse createProduct(@Valid @RequestBody ProductRequest productRequest) {
 		return productService.createProduct(productRequest);
 	}
 
