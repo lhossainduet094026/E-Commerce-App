@@ -29,8 +29,8 @@ public class ProductWorkflowController {
 		//need to work
 		ProductCreateRequest productCreateRequest = ProductMapper.toProductCreateRequest(productWorkflowRequest);
 		
+		ProductWorkflowResponse workflowResponse = productWorkflowService.createProductWorkflow(productCreateRequest);
 		
-		
-		return ProductWorkflowResponse;
+		return workflowResponse;
 	}
 }
