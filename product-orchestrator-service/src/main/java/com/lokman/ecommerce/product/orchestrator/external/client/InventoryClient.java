@@ -10,7 +10,6 @@ import com.lokman.ecommerce.product.orchestrator.dto.response.InventoryUpdateRes
 
 @FeignClient(name = "inventory-service", url = "${inventory.service.url}")
 public interface InventoryClient {
-
 	@PostMapping("/updateQuantity")
 	ResponseEntity<InventoryUpdateResponse> upsertInventory(@RequestBody InventoryCreateRequest inventoryRequest);
 }

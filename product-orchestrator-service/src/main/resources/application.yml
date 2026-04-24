@@ -32,14 +32,18 @@ inventory:
   service:
     url: http://localhost:8082/api/inventory
         
- resilence4j:
- 	retry:
- 	  instances:
- 	    inventoryService:
- 	     maxAttempts: 3
- 	     waitDuration: 1s 
+ resilience4j:
+  retry:
+    instances:
+      inventoryService:
+        maxAttempts: 3
+        waitDuration: 1s
+
+      productService:
+        maxAttempts: 3
+        waitDuration: 1s
  	     
- circuitbreaker:
+  circuitbreaker:
     instances:
       inventoryService:
         slidingWindowSize: 10
@@ -48,6 +52,14 @@ inventory:
         waitDurationInOpenState: 10s
         permittedNumberOfCallsInHalfOpenState: 3
         automaticTransitionFromOpenToHalfOpenEnabled: true
-          	     
+
+      productService:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        failureRateThreshold: 40
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+    
  	     
  	            

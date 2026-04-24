@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lokman.ecommerce.product.orchestrator.dto.mapper.ProductMapper;
-import com.lokman.ecommerce.product.orchestrator.dto.request.ProductCreateRequest;
 import com.lokman.ecommerce.product.orchestrator.dto.request.ProductWorkflowRequest;
 import com.lokman.ecommerce.product.orchestrator.dto.response.ProductWorkflowResponse;
 import com.lokman.ecommerce.product.orchestrator.service.ProductWorkflowService;
@@ -26,9 +24,7 @@ public class ProductWorkflowController {
 	@PostMapping
 	public ProductWorkflowResponse createProuctWorkflow(@Valid @RequestBody ProductWorkflowRequest productWorkflowRequest) {
 		
-		ProductCreateRequest productCreateRequest = ProductMapper.toProductCreateRequest(productWorkflowRequest);
-		
-		ProductWorkflowResponse workflowResponse = productWorkflowService.createProductWorkflow(productCreateRequest);
+		ProductWorkflowResponse workflowResponse = productWorkflowService.createProductWorkflow(productWorkflowRequest);
 		
 		return workflowResponse;
 	}
