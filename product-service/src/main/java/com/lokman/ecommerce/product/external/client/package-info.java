@@ -1,1 +1,0 @@
-package com.lokman.ecommerce.product.external.client;

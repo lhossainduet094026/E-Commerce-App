@@ -1,10 +1,10 @@
 package com.lokman.ecommerce.product.exception;
 
-public class AlreadyExist extends RuntimeException {
+public class AlreadyExistException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
-	public AlreadyExist(String message) {
+	public AlreadyExistException(String message) {
 		super(message);
 	}
 }
