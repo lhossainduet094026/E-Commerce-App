@@ -26,11 +26,7 @@ public class InventoryService {
 		ResponseEntity<InventoryUpdateResponse> response = inventoryClient.upsertInventory(inventoryCreateRequest);
 
 		if (response.getBody() == null) {
-
-			return new InventoryUpdateResponse(null, 
-					inventoryCreateRequest.skuCode(),
-					inventoryCreateRequest.quantity(), 
-					"FAILED");
+			throw new RuntimeException("Inventory response is null");
 		}
 
 		return response.getBody();
