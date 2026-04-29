@@ -1,12 +1,14 @@
 package com.lokman.ecommerce.product.orchestrator.dto.request;
 
-import jakarta.validation.constraints.DecimalMin;
+import java.math.BigDecimal;
+
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 public record ProductWorkflowRequest(@NotBlank(message = "SkuCode required") String skuCode, 
 		@NotBlank(message = "Name required") String name, 
 		String description, 
-		@DecimalMin(value = "0.0", inclusive = true, message = "Price cannot be negative")
+		@Min(value = 0, message = "Price cannot be negative") BigDecimal price, 
 		Integer quantity) {
 
 }
