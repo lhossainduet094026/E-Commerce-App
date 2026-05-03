@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.lokman.ecommerce.product.query.exception.ProductNotfoundException;
 import com.lokman.ecommerce.product.query.external.client.InventoryClient;
-import com.lokman.ecommerce.product.query.external.client.ProductClient;
+import com.lokman.ecommerce.product.query.gateway.service.ProductService;
 import com.lokman.ecommerce.product.query.response.InventoryResponse;
 import com.lokman.ecommerce.product.query.response.ProductResponse;
 import com.lokman.ecommerce.product.query.response.ProductWithInventoryResponse;
@@ -22,12 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ProductQueryService {
 
-	private final ProductClient productClient;
+	private final ProductService productService;
 	private final InventoryClient inventoryClient;
 
 	public List<ProductWithInventoryResponse> getProductList(int page, int limit) {
 
-		List<ProductResponse> products = productClient.getProducts(page, limit);
+		List<ProductResponse> products = productService.getProducts(page, limit);
 
 		if (products == null || products.isEmpty()) {
 		    throw new ProductNotfoundException("Product not found");

@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: product-read-service
+    
+ product:
+  service:
+    url: http://localhost:8081/api/product
+    
+inventory:
+  service:
+    url: http://localhost:8082/api/inventory
+        
+ resilience4j:
+  retry:
+    instances:
+      inventoryService:
+        maxAttempts: 3
+        waitDuration: 1s
+ 	     
+  circuitbreaker:
+    instances:
+      inventoryService:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        failureRateThreshold: 40
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+
+      productService:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        failureRateThreshold: 40
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true

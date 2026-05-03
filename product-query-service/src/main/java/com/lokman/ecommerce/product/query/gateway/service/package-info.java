@@ -1,0 +1,1 @@
+package com.lokman.ecommerce.product.query.gateway.service;
