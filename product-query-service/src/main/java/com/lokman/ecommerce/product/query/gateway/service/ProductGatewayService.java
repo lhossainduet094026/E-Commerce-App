@@ -14,13 +14,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProductService {
+public class ProductGatewayService {
 
 	private final ProductClient productClient;
 
 	@CircuitBreaker(name = "productService", fallbackMethod = "productsFallback")
 	public List<ProductResponse> getProducts(int page, int limit) {
-
 		return productClient.getProducts(page, limit);
 
 	}

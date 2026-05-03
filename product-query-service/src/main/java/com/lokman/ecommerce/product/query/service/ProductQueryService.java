@@ -7,9 +7,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.lokman.ecommerce.product.query.exception.ProductNotfoundException;
-import com.lokman.ecommerce.product.query.external.client.InventoryClient;
-import com.lokman.ecommerce.product.query.gateway.service.ProductService;
+import com.lokman.ecommerce.product.query.gateway.service.InventoryGatewayService;
+import com.lokman.ecommerce.product.query.gateway.service.ProductGatewayService;
 import com.lokman.ecommerce.product.query.response.InventoryResponse;
 import com.lokman.ecommerce.product.query.response.ProductResponse;
 import com.lokman.ecommerce.product.query.response.ProductWithInventoryResponse;
@@ -22,20 +21,16 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ProductQueryService {
 
-	private final ProductService productService;
-	private final InventoryClient inventoryClient;
+	private final ProductGatewayService productGatewayService;
+	private final InventoryGatewayService inventoryGatewayService;
 
 	public List<ProductWithInventoryResponse> getProductList(int page, int limit) {
 
-		List<ProductResponse> products = productService.getProducts(page, limit);
-
-		if (products == null || products.isEmpty()) {
-		    throw new ProductNotfoundException("Product not found");
-		}
+		List<ProductResponse> products = productGatewayService.getProducts(page, limit);
 
 		List<String> skuCodes = products.stream().map(ProductResponse::skuCode).toList();
 
-		List<InventoryResponse> inventories = inventoryClient.getInventories(skuCodes);
+		List<InventoryResponse> inventories = inventoryGatewayService.getInventories(skuCodes);
 		
 		List<InventoryResponse> safeInventories =  Optional.ofNullable(inventories).orElse(List.of());
 
