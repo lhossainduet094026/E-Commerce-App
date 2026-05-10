@@ -1,12 +1,13 @@
 package com.lokman.ecommerce.order.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lokman.ecommerce.order.request.ProductOrderRequest;
+import com.lokman.ecommerce.order.request.CreateOrderRequest;
+import com.lokman.ecommerce.order.response.OrderResponse;
 import com.lokman.ecommerce.order.service.OrderService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderController {
 
 	private final OrderService orderService;
-	
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseStatus createOrder(@RequestBody ProductOrderRequest productOrderRequest) {
-		return orderService.createOrder(productOrderRequest);
+
+	public ResponseEntity<OrderResponse> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+		OrderResponse orderResponse = orderService.createOrder(createOrderRequest);
+
+		return new ResponseEntity<OrderResponse>(orderResponse, HttpStatus.CREATED);
 	}
 }
