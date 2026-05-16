@@ -1,6 +1,7 @@
 package com.lokman.ecommerce.order.service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -8,6 +9,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.lokman.ecommerce.order.event.payload.Item;
+import com.lokman.ecommerce.order.event.payload.OrderCreatedEvent;
+import com.lokman.ecommerce.order.event.publisher.OrderEventProducer;
 import com.lokman.ecommerce.order.external.ProductClient;
 import com.lokman.ecommerce.order.mapper.OrderMapper;
 import com.lokman.ecommerce.order.model.Order;
@@ -28,6 +32,7 @@ public class OrderService {
 
 	private final ProductClient productClient;
 	private final OrderRepository orderRepository;
+	private final OrderEventProducer orderEventProducer;
 
 	public OrderResponse createOrder(CreateOrderRequest createOrderRequest) {
 
@@ -38,17 +43,34 @@ public class OrderService {
 		Map<Long, BigDecimal> mapOfProductPrice = products.stream()
 				.collect(Collectors.toMap(ProductResponse::productId, ProductResponse::price));
 
-		Order order = prepareOrder(createOrderRequest, mapOfProductPrice);
+		Order order = storeOrder(createOrderRequest, mapOfProductPrice);
 
-		order = storeOrder(order);
-		
+		if (order.getId() == null) {
+			return new OrderResponse(null, order.getStatus().FAILED.name(), "Order creation failed");
+		}
+
+		OrderCreatedEvent preparedOrderCreatedEvent = prepareOrderCreatedEvent(order.getId(), correlationId, createOrderRequest);
+
+		orderEventProducer.send(preparedOrderCreatedEvent);
+
 		return new OrderResponse(order.getId(), order.getStatus().name(), "Order created");
 	}
 
+	private OrderCreatedEvent prepareOrderCreatedEvent(Long orderId, String correlationId,
+			CreateOrderRequest createOrderRequest) {
+
+		List<Item> items = createOrderRequest.items().stream().map(item -> new Item(item.productId(), item.quantity()))
+				.toList();
+
+		return new OrderCreatedEvent(orderId, createOrderRequest.userId(), items, Instant.now(), correlationId);
+	}
+
 	@Transactional
-	public Order storeOrder(Order order) {
+	public Order storeOrder(CreateOrderRequest createOrderRequest, Map<Long, BigDecimal> mapOfProductPrice) {
 		
-		return orderRepository.save(order);
+		Order preparedOrder = prepareOrder(createOrderRequest, mapOfProductPrice);
+
+		return orderRepository.save(preparedOrder);
 	}
 
 	private Order prepareOrder(CreateOrderRequest createOrderRequest, Map<Long, BigDecimal> mapOfProductPrice) {
@@ -71,8 +93,8 @@ public class OrderService {
 
 		for (OrderItemRequest item : items) {
 			BigDecimal price = mapOfProductPrice.get(item.productId());
-			BigDecimal pricePriceSingleItem = price.multiply(BigDecimal.valueOf(item.quantity()));
-			totalPrice = totalPrice.add(pricePriceSingleItem);
+			BigDecimal priceSingleItem = price.multiply(BigDecimal.valueOf(item.quantity()));
+			totalPrice = totalPrice.add(priceSingleItem);
 		}
 
 		return totalPrice;
