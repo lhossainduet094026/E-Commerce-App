@@ -49,18 +49,37 @@ public class OrderService {
 			return new OrderResponse(null, order.getStatus().FAILED.name(), "Order creation failed");
 		}
 
-		OrderCreatedEvent preparedOrderCreatedEvent = prepareOrderCreatedEvent(order.getId(), correlationId, createOrderRequest);
+		OrderCreatedEvent preparedOrderCreatedEvent = prepareOrderCreatedEvent(order.getId(), correlationId, products, createOrderRequest);
 
 		orderEventProducer.send(preparedOrderCreatedEvent);
 
 		return new OrderResponse(order.getId(), order.getStatus().name(), "Order created");
 	}
 
-	private OrderCreatedEvent prepareOrderCreatedEvent(Long orderId, String correlationId,
+	private OrderCreatedEvent prepareOrderCreatedEvent(Long orderId, String correlationId,List<ProductResponse> products,
 			CreateOrderRequest createOrderRequest) {
 
-		List<Item> items = createOrderRequest.items().stream().map(item -> new Item(item.productId(), item.quantity()))
-				.toList();
+		Map<Long, String> productIdToSkuCode = products.stream()
+		        .collect(Collectors.toMap(
+		                ProductResponse::productId, 
+		                ProductResponse::skuCode
+		        ));
+		
+		List<Item> items = createOrderRequest.items().stream()
+		        .map(requestItem -> {
+		            String skuCode = productIdToSkuCode.get(requestItem.productId());
+		            
+		            if (skuCode == null) {
+		                throw new IllegalArgumentException("SKU not found for productId: " + requestItem.productId());
+		            }
+		            
+		            return new Item(
+		                requestItem.productId(),
+		                skuCode,
+		                requestItem.quantity()
+		            );
+		        })
+		        .toList();
 
 		return new OrderCreatedEvent(orderId, createOrderRequest.userId(), items, Instant.now(), correlationId);
 	}

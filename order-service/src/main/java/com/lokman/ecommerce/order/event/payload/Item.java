@@ -1,4 +1,4 @@
 package com.lokman.ecommerce.order.event.payload;
 
-public record Item(Long productId, int quantity) {
+public record Item(Long productId, String skuCode, int quantity) {
 }
