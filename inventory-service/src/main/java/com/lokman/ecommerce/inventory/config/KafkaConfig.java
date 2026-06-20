@@ -12,7 +12,9 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.DeserializationException;
+import org.springframework.util.backoff.ExponentialBackOff;
 
+import com.lokman.ecommerce.inventory.exception.InvalidMessageException;
 import com.lokman.ecommerce.inventory.kafka.event.OrderCreatedEvent;
 
 @Configuration
@@ -32,10 +34,16 @@ public class KafkaConfig {
 
 	@Bean
 	public DefaultErrorHandler handler(DeadLetterPublishingRecoverer recoverer) {
+		
+		ExponentialBackOff backOff = new ExponentialBackOff();
+		backOff.setInitialInterval(1000L);  // 1 second
+		backOff.setMultiplier(2.0);         // exponential growth
+		backOff.setMaxInterval(10000L);     // cap interval
+		backOff.setMaxElapsedTime(30000L);  // total retry duration
 
-		DefaultErrorHandler handler = new DefaultErrorHandler(recoverer);
+		DefaultErrorHandler handler = new DefaultErrorHandler(recoverer, backOff);
 
-		handler.addNotRetryableExceptions(DeserializationException.class);
+		handler.addNotRetryableExceptions(DeserializationException.class, InvalidMessageException.class);
 
 		return handler;
 	}
@@ -48,7 +56,7 @@ public class KafkaConfig {
 		var factory = new ConcurrentKafkaListenerContainerFactory<String, OrderCreatedEvent>();
 		factory.setConsumerFactory(cf);
 		factory.setCommonErrorHandler(errorHandler);
-		factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
+		factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
 		return factory;
 	}
 }

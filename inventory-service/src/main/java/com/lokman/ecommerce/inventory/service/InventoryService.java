@@ -14,5 +14,6 @@ public class InventoryService {
 	
 	public void processOrderEvent(OrderCreatedEvent event) {
 		
+		
 	}
 }
