@@ -1,0 +1,1 @@
+package com.lokman.ecommerce.inventory.repository;
