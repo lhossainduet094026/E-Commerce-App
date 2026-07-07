@@ -1,5 +1,5 @@
 # E-Commerce-App
-A Spring Boot-based microservices e-commerce backend system implementing production-like architecture patterns, built for learning distributed systems, system design, and scalable backend development.
+A distributed microservices-based e-commerce platform demonstrating event-driven architecture, Saga choreography, API Gateway, and resilient service communication.
 
 ## 🧩 Microservices Architecture
 
